@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "serve:api": "nx serve api",
-    "serve:frontend": "nx serve frontend"
+    "serve:frontend": "nx serve frontend",
+    "test:shared": "nx test shared"
   },
   "private": true,
   "devDependencies": {
@@ -73,6 +74,7 @@
     "@nestjs/platform-express": "^11.0.0",
     "axios": "^1.6.0",
     "reflect-metadata": "^0.2.0",
-    "rxjs": "~7.8.0"
+    "rxjs": "~7.8.0",
+    "zod": "^4.4.3"
   }
 }
