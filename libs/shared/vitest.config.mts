@@ -9,7 +9,7 @@ export default defineConfig(() => ({
   test: {
     name: 'shared',
     watch: false,
-    globals: true,
+    globals: false, // info: I want explicit imports, so globals are disabled
     environment: 'node',
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
