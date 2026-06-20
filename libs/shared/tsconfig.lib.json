@@ -2,6 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
+    "rootDir": "./src",
     "declaration": true,
     "declarationMap": true, // instead of base tsconfig
     "emitDeclarationOnly": false, // instead of base tsconfig
