@@ -5,6 +5,7 @@
   "scripts": {
     "serve:api": "nx serve api",
     "serve:frontend": "nx serve frontend",
+    "test:api": "nx test api",
     "test:shared": "nx test shared"
   },
   "private": true,
