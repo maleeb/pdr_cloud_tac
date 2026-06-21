@@ -1,5 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, test } from 'vitest';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -14,7 +14,7 @@ describe('AppController', () => {
   });
 
   describe('getData', () => {
-    it('should return "Hello API"', () => {
+    test('should return "Hello API"', () => {
       const appController = app.get<AppController>(AppController);
       expect(appController.getData()).toEqual({ message: 'Hello API' });
     });
