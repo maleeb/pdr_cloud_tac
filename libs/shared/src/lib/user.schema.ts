@@ -18,7 +18,7 @@ const optionalIsoDateString = z.preprocess(
   isoDateString.optional(),
 );
 
-export const userSchema = z.object({
+const userBaseSchema = z.object({
   id: z.number().int().positive(),
   firstName: z.string().trim().min(1, 'First name is required'),
   lastName: z.string().trim().min(1, 'Last name is required'),
@@ -31,4 +31,31 @@ export const userSchema = z.object({
   role: z.enum(userRoles),
 });
 
-export const createUserSchema = userSchema.omit({ id: true });
+const createUserBaseSchema = userBaseSchema.omit({ id: true });
+
+const addRoleRequirementIssues = (
+  user: z.infer<typeof createUserBaseSchema>,
+  ctx: z.RefinementCtx,
+) => {
+  if ((user.role === 'admin' || user.role === 'editor') && !user.phoneNumber) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['phoneNumber'],
+      message: 'Phone number is required for admins and editors',
+    });
+  }
+
+  if (user.role === 'admin' && !user.birthDate) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['birthDate'],
+      message: 'Birth date is required for admins',
+    });
+  }
+};
+
+export const userSchema = userBaseSchema.superRefine(addRoleRequirementIssues);
+
+export const createUserSchema = createUserBaseSchema.superRefine(
+  addRoleRequirementIssues,
+);
