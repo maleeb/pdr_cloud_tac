@@ -49,7 +49,7 @@ describe('UsersRepository', () => {
       'utf8',
     );
 
-    const repository = new UsersRepository(usersPath);
+    const repository = UsersRepository.fromFile(usersPath);
     const users = await repository.findAll();
 
     expect(users).toHaveLength(3);
@@ -88,7 +88,7 @@ describe('UsersRepository', () => {
       'utf8',
     );
 
-    const repository = new UsersRepository(usersPath);
+    const repository = UsersRepository.fromFile(usersPath);
     const user = await repository.create({
       firstName: 'Spence',
       lastName: 'Olchin',

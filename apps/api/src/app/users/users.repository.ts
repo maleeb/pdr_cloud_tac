@@ -32,9 +32,17 @@ function findWorkspaceRoot(startPath: string): string {
 
 @Injectable()
 export class UsersRepository {
+  private usersPath = defaultUsersPath;
   private writeLock: Promise<unknown> = Promise.resolve();
 
-  constructor(private readonly usersPath = defaultUsersPath) {}
+  // INFO: this factory method allows creating a repository instance with a custom users file path, which is useful for testing with temporary files
+  static fromFile(usersPath: string): UsersRepository {
+    const repository = new UsersRepository();
+
+    repository.usersPath = usersPath;
+
+    return repository;
+  }
 
   async findAll(): Promise<User[]> {
     await this.waitForWrites();
