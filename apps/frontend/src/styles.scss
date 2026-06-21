@@ -1,1 +1,74 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+$pdr-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+      tertiary: mat.$yellow-palette,
+      use-system-variables: true,
+    ),
+    typography: (
+      plain-family: (
+        Inter,
+        Roboto,
+        sans-serif,
+      ),
+      brand-family: (
+        Inter,
+        Roboto,
+        sans-serif,
+      ),
+      use-system-variables: true,
+    ),
+    density: (
+      scale: 0,
+    ),
+  )
+);
+
+@include mat.core();
+
+:root {
+  @include mat.all-component-themes($pdr-theme);
+  @include mat.system-level-colors(
+    $pdr-theme,
+    (
+      primary: #1da4e8,
+      on-primary: #ffffff,
+      primary-container: #d6efff,
+      on-primary-container: #00344f,
+      secondary: #20d2a8,
+      on-secondary: #002019,
+      secondary-container: #c7f5e9,
+      on-secondary-container: #00382d,
+      tertiary: #e4dc46,
+      on-tertiary: #242200,
+      tertiary-container: #f9f2a6,
+      on-tertiary-container: #3a3600,
+      error: #d32f55,
+      on-error: #ffffff,
+      error-container: #ffd9df,
+      on-error-container: #400012,
+    )
+  );
+  @include mat.system-level-typography($pdr-theme);
+
+  color-scheme: light;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font-family: Inter, Roboto, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
