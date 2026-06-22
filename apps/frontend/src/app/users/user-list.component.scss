@@ -97,6 +97,18 @@ th.mat-mdc-header-cell {
   text-transform: capitalize;
 }
 
+.issue-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  margin-left: 8px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+  font: var(--mat-sys-label-small);
+}
+
 .state-panel {
   display: grid;
   min-height: 220px;

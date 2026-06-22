@@ -37,6 +37,7 @@ describe('UserListComponent', () => {
       email: 'arthur.spooner@example.com',
       phoneNumber: '+1-555-123-4567',
       role: 'editor',
+      dataIssues: ['phoneNumber uses an unexpected format'],
     },
   ];
   const manyUsers: User[] = Array.from({ length: 30 }, (_, index) => ({
@@ -81,6 +82,7 @@ describe('UserListComponent', () => {
 
     expect(text).toContain('Doug Heffernan');
     expect(text).toContain('arthur.spooner@example.com');
+    expect(text).toContain('Issue');
     expect(text).toContain('viewer');
   });
 

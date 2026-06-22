@@ -59,12 +59,13 @@ export class UsersRepository {
   async create(input: CreateUser): Promise<User> {
     const operation = this.writeLock.then(async () => {
       const createUser = createUserSchema.parse(input);
-      const users = await this.readUsers();
+      const rawUsers = await this.readRawUsers();
+      const users = rawUsers.map((rawUser) => this.normalizeUser(rawUser));
       const nextId =
         users.reduce((maxId, user) => Math.max(maxId, user.id), 0) + 1;
       const user = userSchema.parse({ id: nextId, ...createUser });
 
-      await this.writeUsers([...users, user]);
+      await this.writeUsers([...rawUsers, user]);
 
       return user;
     });
@@ -83,13 +84,18 @@ export class UsersRepository {
   }
 
   private async readUsers(): Promise<User[]> {
-    const rawJson = await readFile(this.usersPath, 'utf8');
-    const rawUsers = z.array(z.unknown()).parse(JSON.parse(rawJson));
+    const rawUsers = await this.readRawUsers();
 
     return rawUsers.map((rawUser) => this.normalizeUser(rawUser));
   }
 
-  private async writeUsers(users: User[]): Promise<void> {
+  private async readRawUsers(): Promise<unknown[]> {
+    const rawJson = await readFile(this.usersPath, 'utf8');
+
+    return z.array(z.unknown()).parse(JSON.parse(rawJson));
+  }
+
+  private async writeUsers(users: unknown[]): Promise<void> {
     await mkdir(dirname(this.usersPath), { recursive: true });
     await writeFile(
       this.usersPath,
@@ -100,17 +106,20 @@ export class UsersRepository {
 
   private normalizeUser(rawUser: unknown): User {
     const record = this.assertRecord(rawUser);
-    const id = this.requiredNumber(record.id, 'id');
+    const dataIssues: string[] = [];
+    const id = this.requiredNumber(record.id, 'id', dataIssues);
     const firstName = this.requiredString(
       record.firstName ?? record.fistName,
       'firstName',
+      dataIssues,
     );
-    const lastName = this.requiredString(record.lastName, 'lastName');
-    const role = this.requiredString(record.role, 'role');
-    const email = this.normalizeEmail(record.email, id);
+    const lastName = this.requiredString(record.lastName, 'lastName', dataIssues);
+    const role = this.requiredString(record.role, 'role', dataIssues);
+    const email = this.normalizeEmail(record.email, dataIssues);
     const phoneNumber = this.optionalString(record.phoneNumber);
     const birthDate = this.optionalBirthDate(
       record.birthDate ?? record.birthDtae,
+      dataIssues,
     );
 
     return userSchema.parse({
@@ -121,6 +130,7 @@ export class UsersRepository {
       phoneNumber,
       birthDate,
       role,
+      dataIssues: dataIssues.length > 0 ? dataIssues : undefined,
     });
   }
 
@@ -132,8 +142,13 @@ export class UsersRepository {
     return value as UnknownRecord;
   }
 
-  private requiredNumber(value: unknown, fieldName: string): number {
+  private requiredNumber(
+    value: unknown,
+    fieldName: string,
+    dataIssues: string[],
+  ): number {
     if (typeof value === 'string' && /^\d+$/.test(value)) {
+      dataIssues.push(`${fieldName} is stored as a string`);
       return Number(value);
     }
 
@@ -144,7 +159,11 @@ export class UsersRepository {
     return value;
   }
 
-  private requiredString(value: unknown, fieldName: string): string {
+  private requiredString(
+    value: unknown,
+    fieldName: string,
+    dataIssues: string[],
+  ): string {
     if (typeof value !== 'string' || value.trim().length === 0) {
       throw new Error(`User ${fieldName} must be a non-empty string`);
     }
@@ -160,21 +179,32 @@ export class UsersRepository {
     return value;
   }
 
-  private optionalBirthDate(value: unknown): string | undefined {
+  private optionalBirthDate(
+    value: unknown,
+    dataIssues: string[],
+  ): string | undefined {
     if (typeof value !== 'string') {
       return undefined;
     }
 
-    return /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : undefined;
-  }
-
-  private normalizeEmail(value: unknown, id: number): string {
-    if (typeof value !== 'string') {
-      return `user-${id}@example.com`;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      dataIssues.push('birthDate is not in YYYY-MM-DD format');
     }
 
-    return z.string().email().safeParse(value).success
-      ? value
-      : `user-${id}@example.com`;
+    return value;
+  }
+
+  private normalizeEmail(value: unknown, dataIssues: string[]): string {
+    if (typeof value !== 'string') {
+      dataIssues.push('email is missing');
+
+      return 'Missing email';
+    }
+
+    if (!z.string().email().safeParse(value).success) {
+      dataIssues.push('email is invalid');
+    }
+
+    return value;
   }
 }

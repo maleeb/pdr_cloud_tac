@@ -22,6 +22,18 @@
       <dt>Birth date</dt>
       <dd>{{ user.birthDate || 'Not provided' }}</dd>
     </div>
+    @if (user.dataIssues?.length) {
+      <div class="issues-row">
+        <dt>Issues</dt>
+        <dd>
+          <ul>
+            @for (issue of user.dataIssues; track issue) {
+              <li>{{ issue }}</li>
+            }
+          </ul>
+        </dd>
+      </div>
+    }
   </dl>
 </mat-dialog-content>
 

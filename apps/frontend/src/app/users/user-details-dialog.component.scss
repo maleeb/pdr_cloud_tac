@@ -25,6 +25,15 @@ dd {
   text-transform: none;
 }
 
+ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+li {
+  color: var(--mat-sys-error);
+}
+
 @media (max-width: 420px) {
   .details-grid div {
     grid-template-columns: 1fr;

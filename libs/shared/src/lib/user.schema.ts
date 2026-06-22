@@ -18,8 +18,24 @@ const optionalIsoDateString = z.preprocess(
   isoDateString.optional(),
 );
 
-const userBaseSchema = z.object({
+const persistedUserSchema = z.object({
   id: z.number().int().positive(),
+  firstName: z.string().trim().min(1, 'First name is required'),
+  lastName: z.string().trim().min(1, 'Last name is required'),
+  email: z.string().trim().min(1, 'Email is required'),
+  phoneNumber: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z.string().trim().min(1).optional(),
+  ),
+  birthDate: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z.string().trim().min(1).optional(),
+  ),
+  role: z.enum(userRoles),
+  dataIssues: z.array(z.string()).optional(),
+});
+
+const createUserBaseSchema = z.object({
   firstName: z.string().trim().min(1, 'First name is required'),
   lastName: z.string().trim().min(1, 'Last name is required'),
   email: z.string().trim().email('Email must be valid'),
@@ -30,8 +46,6 @@ const userBaseSchema = z.object({
   birthDate: optionalIsoDateString,
   role: z.enum(userRoles),
 });
-
-const createUserBaseSchema = userBaseSchema.omit({ id: true });
 
 const addRoleRequirementIssues = (
   user: z.infer<typeof createUserBaseSchema>,
@@ -54,7 +68,7 @@ const addRoleRequirementIssues = (
   }
 };
 
-export const userSchema = userBaseSchema.superRefine(addRoleRequirementIssues);
+export const userSchema = persistedUserSchema;
 
 export const createUserSchema = createUserBaseSchema.superRefine(
   addRoleRequirementIssues,

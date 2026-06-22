@@ -17,7 +17,7 @@ describe('UsersRepository', () => {
     await rm(tempDir, { recursive: true, force: true });
   });
 
-  test('loads and normalizes persisted users', async () => {
+  test('loads persisted users and reports data issues without replacing values', async () => {
     await writeFile(
       usersPath,
       JSON.stringify([
@@ -59,6 +59,8 @@ describe('UsersRepository', () => {
         firstName: 'Doug',
         lastName: 'Heffernan',
         email: 'doug.heffernan@example.com',
+        birthDate: '31-31-9999',
+        dataIssues: ['birthDate is not in YYYY-MM-DD format'],
         role: 'viewer',
       }),
     );
@@ -69,22 +71,25 @@ describe('UsersRepository', () => {
       }),
     );
     expect(users.find((user) => user.id === 8)?.email).toBe(
-      'user-8@example.com',
+      'not-an-email',
+    );
+    expect(users.find((user) => user.id === 8)?.dataIssues).toContain(
+      'email is invalid',
     );
   });
 
-  test('persists created users with the next id', async () => {
+  test('persists created users with the next id without rewriting existing records', async () => {
+    const existingUser = {
+      id: '7',
+      fistName: 'Deacon',
+      lastName: 'Palmer',
+      email: 'not-an-email',
+      role: 'viewer',
+    };
+
     await writeFile(
       usersPath,
-      JSON.stringify([
-        {
-          id: 7,
-          firstName: 'Deacon',
-          lastName: 'Palmer',
-          email: 'deacon.palmer@example.com',
-          role: 'viewer',
-        },
-      ]),
+      JSON.stringify([existingUser]),
       'utf8',
     );
 
@@ -106,6 +111,7 @@ describe('UsersRepository', () => {
       }),
     );
     expect(persistedUsers).toHaveLength(2);
+    expect(persistedUsers[0]).toEqual(existingUser);
     expect(persistedUsers[1]).toEqual(user);
   });
 });

@@ -105,4 +105,18 @@ describe('user schemas', () => {
 
     expect(result.success).toBe(true);
   });
+
+  test('allows persisted users to expose source data issues', () => {
+    const result = userSchema.safeParse({
+      id: 8,
+      firstName: 'Jack',
+      lastName: 'Hanson',
+      email: 'not-an-email',
+      birthDate: '1997-06-03',
+      role: 'viewer',
+      dataIssues: ['email is invalid'],
+    });
+
+    expect(result.success).toBe(true);
+  });
 });

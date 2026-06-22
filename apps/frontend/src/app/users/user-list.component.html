@@ -52,7 +52,12 @@
 
         <ng-container matColumnDef="email">
           <th mat-header-cell *matHeaderCellDef>Email</th>
-          <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+          <td mat-cell *matCellDef="let user">
+            <span>{{ user.email }}</span>
+            @if (user.dataIssues?.length) {
+              <span class="issue-pill">Issue</span>
+            }
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="role">
