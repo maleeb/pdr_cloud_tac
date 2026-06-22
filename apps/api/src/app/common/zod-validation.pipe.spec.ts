@@ -25,13 +25,63 @@ describe('ZodValidationPipe', () => {
     });
   });
 
-  test('throws bad request for invalid input', () => {
+  test('allows editors with phone number and no birth date', () => {
+    const result = pipe.transform(
+      {
+        firstName: 'Arthur',
+        lastName: 'Spooner',
+        email: 'arthur.spooner@example.com',
+        phoneNumber: '+1-555-123-4567',
+        role: 'editor',
+      },
+      { type: 'body' },
+    );
+
+    expect(result).toEqual({
+      firstName: 'Arthur',
+      lastName: 'Spooner',
+      email: 'arthur.spooner@example.com',
+      phoneNumber: '+1-555-123-4567',
+      role: 'editor',
+    });
+  });
+
+  test('throws bad request for editors without phone number', () => {
     expect(() =>
       pipe.transform(
         {
           firstName: 'Arthur',
           lastName: 'Spooner',
           email: 'arthur.spooner@example.com',
+          role: 'editor',
+        },
+        { type: 'body' },
+      ),
+    ).toThrow(BadRequestException);
+  });
+
+  test('throws bad request for admins without phone number and birth date', () => {
+    expect(() =>
+      pipe.transform(
+        {
+          firstName: 'Arthur',
+          lastName: 'Spooner',
+          email: 'arthur.spooner@example.com',
+          role: 'admin',
+        },
+        { type: 'body' },
+      ),
+    ).toThrow(BadRequestException);
+  });
+
+  test('throws bad request for admins without birth date', () => {
+    expect(() =>
+      pipe.transform(
+        {
+          firstName: 'Arthur',
+          lastName: 'Spooner',
+          email: 'arthur.spooner@example.com',
+          phoneNumber: '+1-555-123-4567',
           role: 'admin',
         },
         { type: 'body' },

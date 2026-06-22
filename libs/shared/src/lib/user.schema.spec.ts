@@ -28,6 +28,16 @@ describe('user schemas', () => {
     );
   });
 
+  test('allows editors with phone number and no birth date', () => {
+    const result = createUserSchema.safeParse({
+      ...validCreateUser,
+      role: 'editor',
+      phoneNumber: '+1-555-123-4567',
+    });
+
+    expect(result.success).toBe(true);
+  });
+
   test('requires phone number and birth date for admins', () => {
     const result = createUserSchema.safeParse({
       ...validCreateUser,
@@ -55,6 +65,16 @@ describe('user schemas', () => {
       role: 'admin',
       phoneNumber: '+1-555-123-4567',
       birthDate: '1990-01-31',
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  test('allows viewers without role-specific fields when optional fields are empty', () => {
+    const result = createUserSchema.safeParse({
+      ...validCreateUser,
+      phoneNumber: '',
+      birthDate: '',
     });
 
     expect(result.success).toBe(true);
