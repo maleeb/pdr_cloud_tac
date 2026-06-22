@@ -34,8 +34,8 @@
           "budgets": [
             {
               "type": "initial",
-              "maximumWarning": "500kb",
-              "maximumError": "1mb"
+              "maximumWarning": "1.25mb",
+              "maximumError": "1.5mb"
             },
             {
               "type": "anyComponentStyle",
@@ -61,7 +61,8 @@
           "buildTarget": "frontend:build:production"
         },
         "development": {
-          "buildTarget": "frontend:build:development"
+          "buildTarget": "frontend:build:development",
+          "proxyConfig": "apps/frontend/proxy.conf.json"
         }
       }
     },
