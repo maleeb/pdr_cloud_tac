@@ -1,0 +1,14 @@
+.create-form-grid {
+  display: grid;
+  width: min(100%, 520px);
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.create-form-grid mat-form-field {
+  width: 100%;
+}
+
+mat-dialog-actions button {
+  min-width: 96px;
+}

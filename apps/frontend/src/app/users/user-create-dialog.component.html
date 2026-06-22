@@ -1,0 +1,95 @@
+<h2 mat-dialog-title>Create user</h2>
+
+<mat-dialog-content>
+  <form class="create-form" [formGroup]="createForm" (ngSubmit)="createUser()">
+    <div class="create-form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>First name</mat-label>
+        <input
+          matInput
+          required
+          formControlName="firstName"
+          autocomplete="given-name"
+        />
+        @if (fieldError('firstName')) {
+          <mat-error>{{ fieldError('firstName') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Last name</mat-label>
+        <input
+          matInput
+          required
+          formControlName="lastName"
+          autocomplete="family-name"
+        />
+        @if (fieldError('lastName')) {
+          <mat-error>{{ fieldError('lastName') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input
+          matInput
+          required
+          formControlName="email"
+          type="email"
+          autocomplete="email"
+        />
+        @if (fieldError('email')) {
+          <mat-error>{{ fieldError('email') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Role</mat-label>
+        <mat-select required formControlName="role">
+          @for (role of roles; track role) {
+            <mat-option [value]="role">{{ role }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Phone</mat-label>
+        <input
+          matInput
+          [required]="roleRequiresPhone()"
+          formControlName="phoneNumber"
+          autocomplete="tel"
+        />
+        @if (fieldError('phoneNumber')) {
+          <mat-error>{{ fieldError('phoneNumber') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Birth date</mat-label>
+        <input
+          matInput
+          [required]="roleRequiresBirthDate()"
+          formControlName="birthDate"
+          type="date"
+        />
+        @if (fieldError('birthDate')) {
+          <mat-error>{{ fieldError('birthDate') }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close>Cancel</button>
+  <button
+    mat-flat-button
+    type="button"
+    [disabled]="isCreating()"
+    (click)="createUser()"
+  >
+    <mat-icon>person_add</mat-icon>
+    Create
+  </button>
+</mat-dialog-actions>

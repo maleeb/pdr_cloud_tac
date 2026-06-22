@@ -1,0 +1,130 @@
+.users-view {
+  display: grid;
+  gap: 16px;
+}
+
+.users-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+h1 {
+  margin: 0;
+  font: var(--mat-sys-headline-small);
+}
+
+p {
+  margin: 4px 0 0;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-medium);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.search-field {
+  width: min(420px, 100%);
+}
+
+.table-shell {
+  overflow: hidden;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 8px;
+  background: var(--mat-sys-surface-container-low);
+}
+
+.table-shell mat-paginator:first-child {
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.table-shell mat-paginator:last-child {
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+table {
+  width: 100%;
+}
+
+th.mat-mdc-header-cell {
+  color: var(--mat-sys-on-surface-variant);
+  font-weight: 600;
+}
+
+.mat-column-id {
+  width: 88px;
+}
+
+.mat-column-role {
+  width: 144px;
+}
+
+.user-row {
+  cursor: pointer;
+}
+
+.user-row:hover,
+.user-row:focus {
+  background: var(--mat-sys-surface-container-high);
+  outline: none;
+}
+
+.role-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+  font: var(--mat-sys-label-medium);
+  text-transform: capitalize;
+}
+
+.state-panel {
+  display: grid;
+  min-height: 220px;
+  place-items: center;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 8px;
+  background: var(--mat-sys-surface-container-low);
+}
+
+.error-state {
+  gap: 12px;
+  color: var(--mat-sys-error);
+}
+
+.empty-row .mat-cell {
+  padding: 24px;
+  color: var(--mat-sys-on-surface-variant);
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .users-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .header-actions {
+    flex-direction: column;
+  }
+
+  .header-actions button {
+    width: 100%;
+  }
+
+  .table-shell {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 680px;
+  }
+}

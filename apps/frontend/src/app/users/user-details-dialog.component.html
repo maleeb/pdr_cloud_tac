@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>{{ fullName() }}</h2>
+
+<mat-dialog-content>
+  <dl class="details-grid">
+    <div>
+      <dt>ID</dt>
+      <dd>{{ user.id }}</dd>
+    </div>
+    <div>
+      <dt>Email</dt>
+      <dd>{{ user.email }}</dd>
+    </div>
+    <div>
+      <dt>Role</dt>
+      <dd>{{ user.role }}</dd>
+    </div>
+    <div>
+      <dt>Phone</dt>
+      <dd>{{ user.phoneNumber || 'Not provided' }}</dd>
+    </div>
+    <div>
+      <dt>Birth date</dt>
+      <dd>{{ user.birthDate || 'Not provided' }}</dd>
+    </div>
+  </dl>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close>Close</button>
+</mat-dialog-actions>
