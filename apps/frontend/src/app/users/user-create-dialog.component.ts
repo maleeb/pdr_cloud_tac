@@ -5,7 +5,8 @@ import {
   type ValidationErrors,
   type ValidatorFn,
 } from '@angular/forms';
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -65,6 +66,7 @@ const createUserValidator: ValidatorFn = (
   styleUrl: './user-create-dialog.component.scss',
 })
 export class UserCreateDialogComponent {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly dialogRef = inject(MatDialogRef<UserCreateDialogComponent>);
   private readonly formBuilder = inject(NonNullableFormBuilder);
   private readonly snackBar = inject(MatSnackBar);
@@ -83,6 +85,16 @@ export class UserCreateDialogComponent {
   );
   protected readonly isCreating = signal(false);
   protected readonly roles = userRoles;
+
+  constructor() {
+    this.createForm.controls.role.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.createForm.controls.phoneNumber.markAsTouched();
+        this.createForm.controls.birthDate.markAsTouched();
+        this.createForm.updateValueAndValidity();
+      });
+  }
 
   protected createUser(): void {
     const result = createUserSchema.safeParse(this.createForm.getRawValue());

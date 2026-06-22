@@ -100,4 +100,77 @@ describe('UserCreateDialogComponent', () => {
       'Birth date is required for admins',
     );
   });
+
+  test('shows phone error when role changes to editor', () => {
+    const fixture = TestBed.createComponent(UserCreateDialogComponent);
+
+    fixture.componentInstance['createForm'].setValue({
+      firstName: 'Arthur',
+      lastName: 'Spooner',
+      email: 'arthur.spooner@example.com',
+      phoneNumber: '',
+      birthDate: '',
+      role: 'viewer',
+    });
+    fixture.componentInstance['createForm'].controls.role.setValue('editor');
+
+    expect(fixture.componentInstance['fieldError']('phoneNumber')).toBe(
+      'Phone number is required for admins and editors',
+    );
+    expect(fixture.componentInstance['fieldError']('birthDate')).toBe('');
+  });
+
+  test('shows phone and birth date errors when role changes to admin', () => {
+    const fixture = TestBed.createComponent(UserCreateDialogComponent);
+
+    fixture.componentInstance['createForm'].setValue({
+      firstName: 'Arthur',
+      lastName: 'Spooner',
+      email: 'arthur.spooner@example.com',
+      phoneNumber: '',
+      birthDate: '',
+      role: 'viewer',
+    });
+    fixture.componentInstance['createForm'].controls.role.setValue('admin');
+
+    expect(fixture.componentInstance['fieldError']('phoneNumber')).toBe(
+      'Phone number is required for admins and editors',
+    );
+    expect(fixture.componentInstance['fieldError']('birthDate')).toBe(
+      'Birth date is required for admins',
+    );
+  });
+
+  test('clears role-specific errors when role changes back to viewer', () => {
+    const fixture = TestBed.createComponent(UserCreateDialogComponent);
+
+    fixture.componentInstance['createForm'].setValue({
+      firstName: 'Arthur',
+      lastName: 'Spooner',
+      email: 'arthur.spooner@example.com',
+      phoneNumber: '',
+      birthDate: '',
+      role: 'admin',
+    });
+    fixture.componentInstance['createForm'].controls.role.setValue('viewer');
+
+    expect(fixture.componentInstance['fieldError']('phoneNumber')).toBe('');
+    expect(fixture.componentInstance['fieldError']('birthDate')).toBe('');
+  });
+
+  test('does not submit invalid role-specific payloads', () => {
+    const fixture = TestBed.createComponent(UserCreateDialogComponent);
+
+    fixture.componentInstance['createForm'].setValue({
+      firstName: 'Arthur',
+      lastName: 'Spooner',
+      email: 'arthur.spooner@example.com',
+      phoneNumber: '',
+      birthDate: '',
+      role: 'editor',
+    });
+    fixture.componentInstance['createUser']();
+
+    expect(usersService.create).not.toHaveBeenCalled();
+  });
 });
