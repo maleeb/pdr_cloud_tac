@@ -159,4 +159,5 @@ Implementation was done in this order:
 - Persistence is file-based, so it is suitable for the challenge but not a production database replacement.
 - There is no authentication or authorization.
 - There is no edit/delete flow because the task only asks for list, details, and create.
+- Pagination is handled client-side after loading `GET /users`; server-side pagination would be the next step for larger datasets.
 - Frontend production bundle budgets were adjusted to account for Angular Material form, table, dialog, and snackbar modules.
