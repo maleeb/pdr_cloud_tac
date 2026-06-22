@@ -44,6 +44,15 @@ p {
   background: var(--mat-sys-surface-container-low);
 }
 
+:host ::ng-deep .table-shell .mat-mdc-paginator-container {
+  justify-content: space-between;
+  padding: 0 12px;
+}
+
+:host ::ng-deep .table-shell .mat-mdc-paginator-page-size {
+  margin-right: auto;
+}
+
 table {
   width: 100%;
 }
