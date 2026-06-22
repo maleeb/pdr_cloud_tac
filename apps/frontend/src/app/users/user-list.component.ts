@@ -16,6 +16,7 @@ import {
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
+import { ActivatedRoute, Router } from '@angular/router';
 import { type User } from '@org/shared';
 
 import { UserCreateDialogComponent } from './user-create-dialog.component';
@@ -39,6 +40,8 @@ import { UsersService } from './users.service';
   styleUrl: './user-list.component.scss',
 })
 export class UserListComponent {
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly usersService = inject(UsersService);
@@ -69,6 +72,7 @@ export class UserListComponent {
   private readonly users = signal<User[]>([]);
 
   constructor() {
+    this.restorePaginationFromUrl();
     this.loadUsers();
   }
 
@@ -77,11 +81,13 @@ export class UserListComponent {
 
     this.searchTerm.set(searchTerm.trim().toLowerCase());
     this.pageIndex.set(0);
+    this.updatePaginationUrl();
   }
 
   protected handlePage(event: PageEvent): void {
     this.pageIndex.set(event.pageIndex);
     this.pageSize.set(event.pageSize);
+    this.updatePaginationUrl();
   }
 
   protected loadUsers(): void {
@@ -91,7 +97,8 @@ export class UserListComponent {
     this.usersService.findAll().subscribe({
       next: (users) => {
         this.users.set(users);
-        this.pageIndex.set(0);
+        this.ensurePageInRange();
+        this.updatePaginationUrl();
         this.isLoading.set(false);
       },
       error: () => {
@@ -132,5 +139,39 @@ export class UserListComponent {
 
   protected fullName(user: User): string {
     return `${user.firstName} ${user.lastName}`;
+  }
+
+  private ensurePageInRange(): void {
+    const total = this.filteredUsers().length;
+    const maxPageIndex = Math.max(Math.ceil(total / this.pageSize()) - 1, 0);
+
+    if (this.pageIndex() > maxPageIndex) {
+      this.pageIndex.set(maxPageIndex);
+    }
+  }
+
+  private restorePaginationFromUrl(): void {
+    const page = Number(this.route.snapshot.queryParamMap.get('page'));
+    const pageSize = Number(this.route.snapshot.queryParamMap.get('pageSize'));
+
+    if (this.pageSizeOptions.includes(pageSize)) {
+      this.pageSize.set(pageSize);
+    }
+
+    if (Number.isInteger(page) && page > 0) {
+      this.pageIndex.set(page - 1);
+    }
+  }
+
+  private updatePaginationUrl(): void {
+    void this.router.navigate([], {
+      queryParams: {
+        page: this.pageIndex() + 1,
+        pageSize: this.pageSize(),
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+      relativeTo: this.route,
+    });
   }
 }

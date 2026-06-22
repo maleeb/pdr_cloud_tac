@@ -2,6 +2,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { type User } from '@org/shared';
 import { Subject, of } from 'rxjs';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
@@ -57,6 +59,7 @@ describe('UserListComponent', () => {
     TestBed.configureTestingModule({
       imports: [NoopAnimationsModule, UserListComponent],
       providers: [
+        provideRouter([]),
         {
           provide: UsersService,
           useValue: usersService,
@@ -108,6 +111,7 @@ describe('UserListComponent', () => {
     TestBed.configureTestingModule({
       imports: [NoopAnimationsModule, UserListComponent],
       providers: [
+        provideRouter([]),
         {
           provide: UsersService,
           useValue: {
@@ -143,6 +147,7 @@ describe('UserListComponent', () => {
     TestBed.configureTestingModule({
       imports: [NoopAnimationsModule, UserListComponent],
       providers: [
+        provideRouter([]),
         {
           provide: UsersService,
           useValue: {
@@ -184,6 +189,44 @@ describe('UserListComponent', () => {
     expect(text).toContain('User 26');
     expect(paginators[1].textContent).toContain('26');
     expect(paginators[1].textContent).toContain('30');
+  });
+
+  test('restores pagination from query params', async () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      imports: [NoopAnimationsModule],
+      providers: [
+        provideRouter([{ path: '', component: UserListComponent }]),
+        {
+          provide: UsersService,
+          useValue: {
+            create: vi.fn(),
+            findAll: vi.fn().mockReturnValue(of(manyUsers)),
+            findById: vi.fn(),
+          },
+        },
+      ],
+    });
+    TestBed.overrideProvider(MatDialog, { useValue: { open: vi.fn() } });
+    TestBed.overrideProvider(MatSnackBar, { useValue: { open: vi.fn() } });
+    await TestBed.compileComponents();
+
+    const harness = await RouterTestingHarness.create();
+    const component = await harness.navigateByUrl(
+      '/?page=2&pageSize=25',
+      UserListComponent,
+    );
+
+    await harness.fixture.whenStable();
+    harness.fixture.detectChanges();
+
+    expect(component['pageIndex']()).toBe(1);
+    expect(component['pageSize']()).toBe(25);
+
+    const text = (harness.fixture.nativeElement as HTMLElement).textContent
+      ?? '';
+    expect(text).not.toContain('User 25');
+    expect(text).toContain('User 26');
   });
 
   test('loads user details before opening the dialog', async () => {
