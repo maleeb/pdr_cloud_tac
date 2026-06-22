@@ -1,5 +1,11 @@
 <mat-toolbar class="app-toolbar">
   <span class="app-title">{{ title }}</span>
+  <nav class="app-nav" aria-label="Main navigation">
+    <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+      Users
+    </a>
+    <a routerLink="/smiley" routerLinkActive="active-link">Smiley</a>
+  </nav>
 </mat-toolbar>
 
 <main class="app-main">
