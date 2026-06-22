@@ -144,7 +144,8 @@ Implementation was done in this order:
 7. Added the create-user dialog with Reactive Forms and snackbars.
 8. Checked that role-based validation works the same in shared code, frontend, and backend.
 9. Added the optional `/smiley` route with a CSS-only responsive smiley.
-10. Ran tests, builds, and manual browser checks for the main flows.
+10. Final design adjustments.
+11. Ran tests, builds, and manual browser checks for the main flows.
 
 ## Assumptions
 
