@@ -119,7 +119,7 @@ export class UserListComponent {
       next: (details) => {
         this.dialog.open(UserDetailsDialogComponent, {
           data: details,
-          width: '520px',
+          width: '400px',
         });
       },
       error: () => {

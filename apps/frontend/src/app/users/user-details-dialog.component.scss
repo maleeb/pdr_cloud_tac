@@ -1,13 +1,15 @@
 .details-grid {
   display: grid;
-  min-width: min(420px, 80vw);
-  gap: 14px;
+  min-width: min(340px, 76vw);
+  gap: 8px;
   margin: 0;
 }
 
 .details-grid div {
   display: grid;
-  gap: 3px;
+  grid-template-columns: 88px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 12px;
 }
 
 dt {
@@ -18,7 +20,14 @@ dt {
 dd {
   margin: 0;
   color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-large);
+  font: var(--mat-sys-body-medium);
   overflow-wrap: anywhere;
   text-transform: none;
+}
+
+@media (max-width: 420px) {
+  .details-grid div {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
 }
