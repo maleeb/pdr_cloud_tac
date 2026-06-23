@@ -6,7 +6,8 @@
     "serve:api": "nx serve api",
     "serve:frontend": "nx serve frontend",
     "test:api": "nx test api",
-    "test:shared": "nx test shared"
+    "test:shared": "nx test shared",
+    "test:frontend": "nx test frontend"
   },
   "private": true,
   "devDependencies": {
