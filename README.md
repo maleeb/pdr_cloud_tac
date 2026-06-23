@@ -68,7 +68,7 @@ npm run test:frontend
 Run a production frontend build:
 
 ```sh
-npx nx build frontend
+npm run build:frontend
 ```
 
 ## API
